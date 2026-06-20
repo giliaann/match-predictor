@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'leaderboards.apps.LeaderboardsConfig',
     'predictions.apps.PredictionsConfig',
     'competitions.apps.CompetitionsConfig',
     'users.apps.UsersConfig',
