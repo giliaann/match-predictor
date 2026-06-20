@@ -12,5 +12,5 @@ wheels/
 # Environmental variables
 .env
 
-# Sqlite3 db
-db.sqlite3
+# Vs code
+.vscode/
