@@ -5,7 +5,10 @@ class RegistrationForCompetition(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='competition_registrations')
     competition = models.ForeignKey('competitions.Competition', on_delete=models.CASCADE,related_name='registrations')
+    points = models.IntegerField(default = 0)
+
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [
