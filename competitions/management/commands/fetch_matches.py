@@ -19,7 +19,7 @@ class Command(BaseCommand):
         api_key = settings.FOOTBALL_DATA_API_KEY
 
         if not api_key:
-            self.stdout.write(self.style.ERROR("API Key is missing in Django settings!"))
+            self.stdout.write(self.style.ERROR("API Key is missing in Django project settings"))
             return
 
         url = f'https://api.football-data.org/v4/competitions/{comp_code}/matches'
@@ -95,6 +95,8 @@ class Command(BaseCommand):
                     'status': m.get('status'),
                     'kickoff_time': m.get('utcDate'),
                     'competition': competition,
+                    'stage': m.get('stage'),
+                    'group': m.get('group'), 
                     'home_team': home_team,
                     'away_team': away_team,
                     'home_score_90': h_90,

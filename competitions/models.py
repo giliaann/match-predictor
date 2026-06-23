@@ -33,6 +33,8 @@ class Match(models.Model):
     kickoff_time = models.DateTimeField()
 
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='matches')
+    stage = models.CharField(max_length=64, null=True, blank=True)
+    group = models.CharField(max_length=32, null=True, blank=True)
 
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches', null=True, blank=True)
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches', null=True, blank=True)
