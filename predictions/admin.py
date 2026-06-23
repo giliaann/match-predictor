@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import RegistrationForCompetition, Prediction
 
-# Register your models here.
+admin.site.register(RegistrationForCompetition)
+admin.site.register(Prediction)
