@@ -46,6 +46,7 @@ class Command(BaseCommand):
             api_id=comp_data.get('id'),
             defaults={
                 'name': comp_data.get('name'),
+                'code': comp_data.get('code'),
                 'emblem': comp_data.get('emblem'),
                 'season_api_id': season_data.get('id'),
                 'date_start': season_data.get('startDate'),

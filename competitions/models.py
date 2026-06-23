@@ -15,6 +15,7 @@ class Competition(models.Model):
     api_id = models.BigIntegerField(unique=True)
     season_api_id = models.BigIntegerField()
     name = models.CharField(max_length=128)
+    code = models.CharField(max_length=16, unique=True, null=True, blank=True)
     date_start = models.DateField()
     date_finish = models.DateField()
     emblem = models.URLField()
