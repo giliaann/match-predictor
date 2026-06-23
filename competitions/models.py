@@ -34,8 +34,8 @@ class Match(models.Model):
 
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='matches')
 
-    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
-    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches')
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches', null=True, blank=True)
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches', null=True, blank=True)
 
     home_score_90 = models.SmallIntegerField(null=True, blank=True)
     away_score_90 = models.SmallIntegerField(null=True, blank=True)

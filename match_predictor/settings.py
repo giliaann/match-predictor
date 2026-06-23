@@ -26,6 +26,8 @@ env = environ.Env()
 
 SECRET_KEY = env('SECRET_KEY')
 
+FOOTBALL_DATA_API_KEY=env('FOOTBALL_DATA_API_KEY')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
