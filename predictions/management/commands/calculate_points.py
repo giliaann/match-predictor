@@ -9,6 +9,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--code',
             type=str,
+            required=True,
             help='The competition code from the API (e.g., WC, CL, PL, EC)'
         )
 
