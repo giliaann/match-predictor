@@ -6,7 +6,7 @@
     <title>Match Predictor</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <style>
-        /* Global Reset & Dark Theme */
+        
         body {
             margin: 0;
             padding: 0;
@@ -29,6 +29,12 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
         .nav-brand {
             font-size: 1.25rem;
             font-weight: 800;
@@ -42,6 +48,25 @@
         }
 
         .nav-brand:hover {
+            color: #60a5fa;
+        }
+
+       
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
             color: #60a5fa;
         }
 
@@ -61,7 +86,7 @@
             font-weight: 600;
         }
 
-        /* Global UI Buttons for Navbar */
+        
         .btn-nav {
             display: inline-block;
             padding: 0.4rem 1rem;
@@ -95,7 +120,7 @@
             background-color: #1d4ed8;
         }
 
-        /* Main Container setup */
+        
         main {
             flex: 1;
             width: 100%;
@@ -105,9 +130,16 @@
 <body>
 
     <nav class="navbar">
-        <a href="{% url 'competition_list' %}" class="nav-brand">
-            Match Predictor
-        </a>
+        <div class="nav-left">
+            <a href="{% url 'competition_list' %}" class="nav-brand">
+                Match Predictor
+            </a>
+            
+            <div class="nav-links">
+                <a href="{% url 'competition_list' %}" class="nav-link">Competitions</a>
+                <a href="{% url 'leaderboard_list' %}" class="nav-link">Leaderboards</a>
+            </div>
+        </div>
         
         <div class="nav-actions">
             {% if user.is_authenticated %}
