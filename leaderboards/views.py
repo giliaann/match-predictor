@@ -202,6 +202,10 @@ class LeaderboardMemberActionView(LoginRequiredMixin, View):
                 messages.error(request, "You cannot remove yourself. Use the resignation option instead.")
                 return redirect('leaderboard_manage', pk=leaderboard.pk)
             
+            if member_reg.is_admin:
+                messages.error(request, "You cannot kick another administrator. They must resign from their role first.")
+                return redirect('leaderboard_manage', pk=leaderboard.pk)
+            
             username = member_reg.competition_registration.user.username
             member_reg.delete()
             messages.success(request, f"Player {username} has been removed from the leaderboard.")
@@ -215,7 +219,6 @@ class LeaderboardMemberActionView(LoginRequiredMixin, View):
             
             if member_reg.competition_registration.user != request.user:
                 raise PermissionDenied()
-
            
             other_admins_exist = leaderboard.registrations.filter(is_admin=True).exclude(pk=member_reg.pk).exists()
             
