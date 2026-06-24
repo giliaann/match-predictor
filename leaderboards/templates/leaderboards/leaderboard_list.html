@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>My Leaderboards</h1>
+    
+    <div class="leaderboards-grid">
+        {% for board in leaderboards %}
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                <h2>{{ board.name }}</h2>
+                <p>Competition: <strong>{{ board.competition.name }}</strong></p>
+                
+                <a href="{% url 'leaderboard_detail' board.id %}">
+                    <button type="button">View Rankings</button>
+                </a>
+            </div>
+        {% empty %}
+            <p>You haven't joined any private leaderboards yet.</p>
+        {% endfor %}
+    </div>
+    
+    <br>
+    <a href="{% url 'leaderboard_create' %}">
+        <button type="button" style="background-color: #007bff; color: white;">+ Create New</button>
+    </a>
+    
+    <a href="{% url 'leaderboard_join' %}" style="margin-left: 10px;">
+        <button type="button" style="background-color: #17a2b8; color: white;">Join via Code</button>
+    </a>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="form-container">
+        <h1>Join a Leaderboard</h1>
+        <p>Enter the invite code provided by your friends to join their private league.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <br>
+            <button type="submit" style="background-color: #17a2b8; color: white;">Join League</button>
+            <a href="{% url 'leaderboard_list' %}" style="margin-left: 15px;">Cancel</a>
+        </form>
+    </div>
+{% endblock content %}
