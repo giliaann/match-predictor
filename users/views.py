@@ -13,7 +13,7 @@ class CustomLoginView(LoginView):
         return reverse_lazy('competition_list')
 
 class CustomLogoutView(LogoutView):
-    next_page = reverse_lazy('competition_list')
+    template_name = 'users/logged_out.html'
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm

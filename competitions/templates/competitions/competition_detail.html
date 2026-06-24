@@ -9,7 +9,7 @@
         
     {% elif not is_registered %}
         <p>You haven't joined this competition yet!</p>
-        <form action="{% url 'join_competition' competition.id %}" method="POST">
+        <form action="{% url 'join_competition' competition.code %}" method="POST">
             {% csrf_token %}
             <button type="submit">Join Competition & Start Predicting!</button>
         </form>
