@@ -1,6 +1,72 @@
 from django.db import transaction
 from competitions.models import Competition, Match
 from predictions.models import RegistrationForCompetition, Prediction
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from competitions.models import Match
+from .models import RegistrationForCompetition
+
+
+def join_competition(user, competition):
+    """
+    Registers a user for a specific competition.
+    """
+    registration, created = RegistrationForCompetition.objects.get_or_create(
+        user=user,
+        competition=competition
+    )
+    return registration, created
+
+@transaction.atomic
+def process_match_predictions(registration, competition, match_ids, home_scores, away_scores):
+    """
+    Processes a bulk list of match predictions submitted by the user.
+    Returns a dictionary with operation statistics for the view to render.
+    """
+    if not (len(match_ids) == len(home_scores) == len(away_scores)):
+        raise ValidationError("Invalid form data. Data lists length mismatch.")
+
+    stats = {
+        'saved': 0,
+        'deleted': 0,
+        'incomplete': 0
+    }
+
+    for i in range(len(match_ids)):
+        m_id = match_ids[i]
+        h_score = home_scores[i]
+        a_score = away_scores[i]
+
+        try:
+          
+            match = Match.objects.get(id=m_id, competition=competition)
+            
+            if match.has_started:
+                continue
+           
+            if h_score != '' and a_score != '':
+                registration.predictions.update_or_create(
+                    match=match,
+                    defaults={
+                        'home_score_prediction': int(h_score),
+                        'away_score_prediction': int(a_score)
+                    }
+                )
+                stats['saved'] += 1
+    
+            elif h_score == '' and a_score == '':
+                deleted, _ = registration.predictions.filter(match=match).delete()
+                if deleted > 0:
+                    stats['deleted'] += 1
+
+            
+            else:
+                stats['incomplete'] += 1
+
+        except (Match.DoesNotExist, ValueError):
+            continue
+
+    return stats
 
 
 def calculate_prediction_points(predicted_home, predicted_away, actual_home, actual_away):
