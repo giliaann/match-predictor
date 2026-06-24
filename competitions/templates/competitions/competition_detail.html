@@ -1,53 +1,510 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ competition.name }} ({{ competition.date_start|date:"Y" }})</h1>
+<style>
+    /* Modern Dark Theme Styles */
+    .competition-container {
+        color: #f8fafc;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 0.75rem;
+    }
+
+    .auth-card {
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        border: none;
+        font-size: 0.9rem;
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    .btn-primary {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+    }
+
+    .btn-danger {
+        background-color: #dc2626;
+        color: #ffffff;
+    }
+
+    .btn-danger:hover {
+        background-color: #b91c1c;
+    }
+
+    .btn-success {
+        background-color: #10b981;
+        color: #ffffff;
+    }
+
+    .btn-success:hover {
+        background-color: #059669;
+    }
+
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .status-badge {
+        background-color: #064e3b;
+        color: #34d399;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 1rem;
+    }
+
+    .nav-tab {
+        padding: 0.5rem 1.25rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background-color: #334155;
+        color: #cbd5e1;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .nav-tab:hover {
+        background-color: #475569;
+        color: #ffffff;
+    }
+
+    .nav-tab.active {
+        background-color: #2563eb;
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Sub-navigation (Groups) */
+    .sub-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+        background: #0f172a;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid #1e293b;
+    }
+
+    .sub-tab {
+        padding: 0.375rem 0.875rem;
+        border-radius: 0.25rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        background-color: transparent;
+        color: #94a3b8;
+        border: 1px solid #334155;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .sub-tab:hover {
+        border-color: #64748b;
+        color: #f1f5f9;
+    }
+
+    .sub-tab.active {
+        background-color: #334155;
+        color: #ffffff;
+        border-color: #475569;
+    }
+
+    /* Match Center */
+    .match-board {
+        background-color: #1e293b;
+        border-radius: 0.5rem;
+        border: 1px solid #334155;
+        overflow: hidden;
+    }
+
+    .board-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #0f172a;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #334155;
+    }
+
+    .board-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #e2e8f0;
+    }
+
+    .match-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .match-row {
+        border-bottom: 1px solid #334155;
+        transition: background-color 0.2s;
+    }
+
+    .match-row:last-child {
+        border-bottom: none;
+    }
+
+    .match-row:hover {
+        background-color: #1e293b;
+    }
+
+    .match-cell {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+    }
+
+    .time-cell {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        width: 20%;
+    }
+
+    .team-cell {
+        font-weight: 500;
+        color: #f8fafc;
+        width: 30%;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .team-cell.home {
+        justify-content: flex-end;
+    }
+
+    .team-emblem {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    .score-cell {
+        width: 20%;
+        text-align: center;
+    }
+
+    .actual-score {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 1px;
+    }
+
+    .extra-score {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+    }
+
+    .penalty-score {
+        font-size: 0.75rem;
+        color: #f87171;
+        font-weight: 600;
+    }
+
+    /* Prediction Inputs */
+    .prediction-container {
+        background-color: #0f172a;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        display: inline-block;
+        border: 1px solid #334155;
+        margin-top: 0.5rem;
+    }
+
+    .prediction-label {
+        font-size: 0.65rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+
+    .score-input {
+        width: 40px;
+        text-align: center;
+        padding: 0.375rem;
+        background-color: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 0.25rem;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.875rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .score-input:focus {
+        border-color: #3b82f6;
+    }
+
+    .score-input:disabled {
+        background-color: #0f172a;
+        color: #64748b;
+        border-color: #334155;
+        cursor: not-allowed;
+    }
+
+    .score-divider {
+        color: #64748b;
+        font-weight: 700;
+        margin: 0 0.5rem;
+    }
+
+    .back-link {
+        color: #94a3b8;
+        text-decoration: none;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        margin-top: 2rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #f8fafc;
+    }
+</style>
+
+<div class="competition-container">
+    <h1 class="page-title">{{ competition.name }} <span style="color: #94a3b8; font-weight: 400;">({{ competition.date_start|date:"Y" }})</span></h1>
     
     {% if not user.is_authenticated %}
-        <p>You must log in to join and predict matches for this competition.</p>
-        <a href="{% url 'login' %}">Log In</a>
+        <div class="auth-card">
+            <h3 style="margin-top: 0; color: #e2e8f0;">Authentication Required</h3>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem;">You must be logged in to access the match center and submit predictions for this tournament.</p>
+            <a href="{% url 'login' %}" class="btn btn-primary">Sign In to Continue</a>
+        </div>
         
     {% elif not is_registered %}
-        <p>You haven't joined this competition yet!</p>
-        <form action="{% url 'join_competition' competition.code %}" method="POST">
-            {% csrf_token %}
-            <button type="submit">Join Competition & Start Predicting!</button>
-        </form>
+        <div class="auth-card">
+            <h3 style="margin-top: 0; color: #e2e8f0;">Enrollment Required</h3>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem;">You are not currently enrolled in this tournament. Join now to begin predicting matches and tracking your rank.</p>
+            <form action="{% url 'join_competition' competition.code %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Enroll & Submit Predictions</button>
+            </form>
+        </div>
         
     {% else %}
-        <p>You are participating in this competition! Good luck.</p>
-        
-        <div style="margin-top: 20px;">
+        <div class="header-actions">
+            <div class="status-badge">
+                <span style="display: block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                Active Participant
+            </div>
+            
             <form method="POST" action="{% url 'competition_leave' competition.code %}">
                 {% csrf_token %}
-                <button type="submit" style="background-color: #dc3545; color: white;" 
-                        onclick="return confirm('Are you sure you want to leave this competition? This will also remove you from all private leaderboards inside it!');">
-                    Leave Entire Competition
+                <button type="submit" class="btn btn-danger" 
+                        onclick="return confirm('Are you sure you wish to withdraw? This action will permanently remove your predictions and delete you from all associated leaderboards.');">
+                    Withdraw from Tournament
                 </button>
             </form>
         </div>
 
+        <div id="tournament-board">
+            
+            <div class="nav-tabs">
+                {% for stage in all_stages %}
+                    <button hx-get="{% url 'competition_detail' competition.code %}?stage={{ stage|urlencode }}"
+                            hx-target="#tournament-board"
+                            hx-select="#tournament-board"
+                            hx-swap="outerHTML"
+                            hx-push-url="true"
+                            class="nav-tab {% if stage == current_stage %}active{% endif %}">
+                        {{ stage }}
+                    </button>
+                {% endfor %}
+            </div>
 
-        <h2>Matches</h2>
-        <div class="matches-list">
-            {% for match in matches %}
-                <!-- Reusable component placeholder: -->
-                <!-- include 'matches/partials/match_row.html' -->
+            <div id="main-matches-container">
                 
-                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-                    {{ match.home_team.name }} vs {{ match.away_team.name }} 
-                    <br>
-                    <small>Kickoff: {{ match.kickoff_time|date:"d.m.Y H:i" }} | Status: {{ match.status }}</small>
-                </div>
-            {% empty %}
-                <p>No matches scheduled for this competition.</p>
-            {% endfor %}
+                {% if all_groups %}
+                    <div class="sub-nav">
+                        {% for group in all_groups %}
+                            <button hx-get="{% url 'competition_detail' competition.code %}?stage={{ current_stage|urlencode }}&group={{ group|urlencode }}"
+                                    hx-target="#tournament-board"
+                                    hx-select="#tournament-board"
+                                    hx-swap="outerHTML"
+                                    hx-push-url="true"
+                                    class="sub-tab {% if group == current_group %}active{% endif %}">
+                                {{ group }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="margin-top: 1.5rem;"></div>
+                {% endif %}
+
+                <form hx-post="{% url 'predict_match_htmx' competition.code %}" hx-target="#status-message">
+                    {% csrf_token %}
+                    
+                    <div class="match-board">
+                        <div class="board-header">
+                            <h3 class="board-title">
+                                {{ current_stage }} {% if current_group %}<span style="color: #64748b;">//</span> {{ current_group }}{% endif %}
+                            </h3>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div id="status-message" style="font-size: 0.875rem; color: #10b981; font-weight: 500;"></div>
+                                <button type="submit" class="btn btn-success">
+                                    Submit Predictions
+                                </button>
+                            </div>
+                        </div>
+
+                        <table class="match-table">
+                            <tbody>
+                                {% for match in matches %}
+                                    <tr class="match-row">
+                                        <td class="match-cell time-cell">
+                                            {{ match.kickoff_time|date:"M j, H:i" }}
+                                        </td>
+                                        
+                                        <td class="match-cell">
+                                            <div class="team-cell home">
+                                                {{ match.home_team.name }}
+                                                {% if match.home_team.emblem %}
+                                                    <img src="{{ match.home_team.emblem }}" alt="{{ match.home_team.name }} logo" class="team-emblem">
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="match-cell score-cell">
+                                            <div style="margin-bottom: 0.75rem;">
+                                                {% if match.home_score_90 is not None and match.away_score_90 is not None %}
+                                                    
+                                                    <div class="actual-score">
+                                                        {{ match.home_score_90 }} <span style="color: #475569; margin: 0 4px;">-</span> {{ match.away_score_90 }}
+                                                    </div>
+                                                    
+                                                    {% if match.home_score_120 is not None and match.away_score_120 is not None %}
+                                                        <div class="extra-score">
+                                                            AET {{ match.home_score_120 }} - {{ match.away_score_120 }}
+                                                        </div>
+                                                    {% endif %}
+                                                    
+                                                    {% if match.home_penalties is not None and match.away_penalties is not None %}
+                                                        <div class="penalty-score">
+                                                            (p) {{ match.home_penalties }} - {{ match.away_penalties }}
+                                                        </div>
+                                                    {% endif %}
+
+                                                {% else %}
+                                                    <div class="actual-score" style="color: #475569;">VS</div>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <div class="prediction-container">
+                                                <div class="prediction-label">Your Prediction</div>  
+                                                
+                                                <div style="display: flex; align-items: center; justify-content: center;">
+                                                    {% if match.has_started %}
+                                                        <input type="hidden" name="match_id" value="{{ match.id }}" disabled>
+                                                        <input type="number" 
+                                                            value="{{ match.user_prediction.home_score_prediction }}" 
+                                                            disabled class="score-input">
+                                                        
+                                                        <span class="score-divider">:</span>
+                                                        
+                                                        <input type="number" 
+                                                            value="{{ match.user_prediction.away_score_prediction }}" 
+                                                            disabled class="score-input">
+                                                    {% else %}
+                                                        <input type="hidden" name="match_id" value="{{ match.id }}">
+                                                        <input type="number" name="home_score" min="0" max="99" 
+                                                            value="{{ match.user_prediction.home_score_prediction }}" 
+                                                            class="score-input">
+                                                        
+                                                        <span class="score-divider">:</span>
+                                                        
+                                                        <input type="number" name="away_score" min="0" max="99" 
+                                                            value="{{ match.user_prediction.away_score_prediction }}" 
+                                                            class="score-input">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="match-cell">
+                                            <div class="team-cell away">
+                                                {% if match.away_team.emblem %}
+                                                    <img src="{{ match.away_team.emblem }}" alt="{{ match.away_team.name }} logo" class="team-emblem">
+                                                {% endif %}
+                                                {{ match.away_team.name }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" style="padding: 3rem; text-align: center; color: #64748b; font-size: 0.95rem;">
+                                            No fixtures available for the selected stage or group.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
         </div>
-
-
-
     {% endif %}
     
-    <br>
-    <a href="{% url 'competition_list' %}">← Back to competition list</a>
+    <a href="{% url 'competition_list' %}" class="back-link">
+        <span style="margin-right: 0.5rem;">←</span> Return to Tournaments
+    </a>
+</div>
 {% endblock content %}

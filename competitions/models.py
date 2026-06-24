@@ -1,5 +1,6 @@
 from django.db import models
-    
+from django.utils import timezone
+
 class Team(models.Model):
 
     api_id = models.BigIntegerField(unique=True)
@@ -48,6 +49,10 @@ class Match(models.Model):
 
     home_penalties = models.SmallIntegerField(null=True, blank=True)
     away_penalties = models.SmallIntegerField(null=True, blank=True)
+
+    @property
+    def has_started(self):
+        return timezone.now() >= self.kickoff_time
 
     def __str__(self):
         return f'{self.home_team} vs {self.away_team} - {self.competition}'

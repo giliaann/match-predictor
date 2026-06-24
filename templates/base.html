@@ -2,28 +2,132 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match Predictor</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        /* Global Reset & Dark Theme */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0f172a; 
+            color: #f8fafc;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1e293b;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #f8fafc;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-brand:hover {
+            color: #60a5fa;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-greeting {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .user-greeting strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Global UI Buttons for Navbar */
+        .btn-nav {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-nav-outline {
+            background-color: transparent;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+        }
+
+        .btn-nav-outline:hover {
+            background-color: #334155;
+            color: #ffffff;
+            border-color: #64748b;
+        }
+
+        .btn-nav-primary {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-nav-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Main Container setup */
+        main {
+            flex: 1;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<nav>
-    <a href="{% url 'competition_list' %}">Home</a>
-    
-    {% if user.is_authenticated %}
-        <span>Logged in as: <strong>{{ user.username }}</strong></span>
+
+    <nav class="navbar">
+        <a href="{% url 'competition_list' %}" class="nav-brand">
+            Match Predictor
+        </a>
         
-        <form action="{% url 'logout' %}" method="POST" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit">Log Out</button>
-        </form>
-        
-    {% else %}
-        <a href="{% url 'login' %}">Log In</a>
-    {% endif %}
-</nav>
+        <div class="nav-actions">
+            {% if user.is_authenticated %}
+                <span class="user-greeting">Logged in as: <strong>{{ user.username }}</strong></span>
+                
+                <form action="{% url 'logout' %}" method="POST" style="display: inline; margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nav btn-nav-outline">Log Out</button>
+                </form>
+                
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-nav btn-nav-primary">Log In</a>
+            {% endif %}
+        </div>
+    </nav>
 
     <main>
         {% block content %}
         {% endblock content %}
     </main>
+
 </body>
 </html>
