@@ -17,6 +17,17 @@
     {% else %}
         <p>You are participating in this competition! Good luck.</p>
         
+        <div style="margin-top: 20px;">
+            <form method="POST" action="{% url 'competition_leave' competition.code %}">
+                {% csrf_token %}
+                <button type="submit" style="background-color: #dc3545; color: white;" 
+                        onclick="return confirm('Are you sure you want to leave this competition? This will also remove you from all private leaderboards inside it!');">
+                    Leave Entire Competition
+                </button>
+            </form>
+        </div>
+
+
         <h2>Matches</h2>
         <div class="matches-list">
             {% for match in matches %}
@@ -32,6 +43,9 @@
                 <p>No matches scheduled for this competition.</p>
             {% endfor %}
         </div>
+
+
+
     {% endif %}
     
     <br>
