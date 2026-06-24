@@ -5,14 +5,21 @@
         <h1>Create a Private Leaderboard</h1>
         <p>Set up a private league to compete and predict matches with your friends.</p>
         
-        <form method="POST">
-            {% csrf_token %}
-            
-            {{ form.as_p }}
-            
-            <br>
-            <button type="submit" style="background-color: #28a745; color: white;">Create Leaderboard</button>
-            <a href="{% url 'leaderboard_list' %}" style="margin-left: 15px;">Cancel</a>
-        </form>
+        {% if form.fields.competition.queryset.exists %}
+            <form method="POST">
+                {% csrf_token %}
+                
+                {{ form.as_p }}
+
+
+                <button type="submit" style="background-color: #28a745; color: white;">Create Leaderboard</button>
+                <a href="{% url 'leaderboard_list' %}" style="margin-left: 15px;">Cancel</a>
+            </form>
+
+            {% else %}
+            <p>You haven't joined any competitions yet. You must join a competition before you can create a leaderboard!</p>
+            <a href="{% url 'competition_list' %}">Browse Competitions</a>
+        {% endif %}
+
     </div>
 {% endblock content %}
