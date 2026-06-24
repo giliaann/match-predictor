@@ -1,104 +1,341 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="manage-container">
-        {% if messages %}
-            <div class="messages" style="margin-bottom: 20px;">
-                {% for message in messages %}
-                    {% if message.tags == 'error' %}
-                        <div style="padding: 10px; border-radius: 4px; margin-bottom: 5px; background-color: #f8d7da; color: #721c24;">
-                            {{ message }}
-                        </div>
-                    {% else %}
-                        <div style="padding: 10px; border-radius: 4px; margin-bottom: 5px; background-color: #d4edda; color: #155724;">
-                            {{ message }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endif %}
+<style>
+    .manage-wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
 
+    /* Notification Messages */
+    .messages {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert {
+        padding: 0.75rem 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .alert-error {
+        background-color: rgba(248, 113, 113, 0.1);
+        color: #f87171;
+        border: 1px solid rgba(248, 113, 113, 0.2);
+    }
+
+    .alert-success {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    /* Header styling */
+    .manage-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.5px;
+    }
+
+    .manage-subtitle {
+        color: #94a3b8;
+        font-size: 1rem;
+        margin: 0 0 2rem 0;
+    }
+
+    .manage-subtitle strong {
+        color: #cbd5e1;
+    }
+
+    .section-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0 0 1rem 0;
+    }
+
+    /* League Actions Controls Box */
+    .actions-panel {
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        padding: 1.75rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .actions-panel p {
+        margin: 0 0 1.5rem 0;
+        font-size: 1rem;
+        color: #cbd5e1;
+    }
+
+    .actions-panel strong {
+        background-color: #0f172a;
+        padding: 0.25rem 0.625rem;
+        border-radius: 0.25rem;
+        color: #60a5fa;
+        font-family: monospace;
+        font-size: 1.15rem;
+        border: 1px solid #334155;
+    }
+
+    .buttons-inline-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    /* System Control Action Buttons */
+    .btn-control {
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-control-secondary {
+        background-color: transparent;
+        color: #cbd5e1;
+        border: 1px solid #475569;
+    }
+
+    .btn-control-secondary:hover {
+        background-color: #334155;
+        color: #ffffff;
+        border-color: #64748b;
+    }
+
+    .btn-control-warning {
+        background-color: #eab308;
+        color: #0f172a;
+    }
+
+    .btn-control-warning:hover {
+        background-color: #ca8a04;
+    }
+
+    .btn-control-danger {
+        background-color: #ef4444;
+        color: #ffffff;
+    }
+
+    .btn-control-danger:hover {
+        background-color: #dc2626;
+    }
+
+    /* Table Members List Setup */
+    .table-wrapper {
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .members-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .members-table th {
+        background-color: #111827;
+        color: #94a3b8;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+    }
+
+    .members-table td {
+        padding: 1rem;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #334155;
+        vertical-align: middle;
+    }
+
+    .members-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .members-table tr:hover td {
+        background-color: #24334d;
+    }
+
+    .role-badge-admin {
+        color: #4ade80;
+        font-weight: 700;
+        background-color: rgba(34, 197, 94, 0.1);
+        padding: 0.15rem 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        font-size: 0.85rem;
+    }
+
+    .role-badge-player {
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+
+    .current-user-tag {
+        color: #94a3b8;
+        font-style: italic;
+        font-size: 0.9rem;
+    }
+
+    /* Small contextual action button within rows */
+    .btn-row-action {
+        padding: 0.375rem 0.75rem;
+        font-weight: 600;
+        font-size: 0.8rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-row-promote {
+        background-color: transparent;
+        color: #cbd5e1;
+        border: 1px solid #475569;
+    }
+
+    .btn-row-promote:hover {
+        background-color: #334155;
+        color: #ffffff;
+        border-color: #64748b;
+    }
+
+    .btn-row-kick {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-row-kick:hover {
+        background-color: #ef4444;
+        color: #ffffff;
+        border-color: #ef4444;
+    }
+
+    .footer-actions {
+        margin-top: 2rem;
+    }
+</style>
+
+<div class="manage-wrapper">
+    
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="manage-header">
         <h1>Manage Leaderboard: {{ leaderboard.name }}</h1>
-        <p>Competition: <strong>{{ leaderboard.competition.name }}</strong></p>
+        <p class="manage-subtitle">Competition: <strong>{{ leaderboard.competition.name }}</strong></p>
+    </div>
 
-        <div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-            <h3>League Actions</h3>
-            <p>Current Invite Code: <strong style="font-size: 1.2em; color: #007bff;">{{ leaderboard.join_code }}</strong></p>
-            
-            <form method="POST" style="display: inline-block; margin-right: 10px;">
+    <div class="actions-panel">
+        <h3 class="section-title" style="margin-top: 0;">League Actions</h3>
+        <p>Current Invite Code: <strong>{{ leaderboard.join_code }}</strong></p>
+        
+        <div class="buttons-inline-group">
+            <form method="POST" style="margin: 0;">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="reset_code">
-                <button type="submit" onclick="return confirm('Are you sure you want to change the invite code? Old code will stop working.');">
+                <button type="submit" class="btn-control btn-control-secondary" onclick="return confirm('Are you sure you want to change the invite code? Old code will stop working.');">
                     Reset Invite Code
                 </button>
             </form>
 
-            <form method="POST" action="{% url 'leaderboard_member_action' current_admin_reg.id %}" style="display: inline-block; margin-right: 10px;">
+            <form method="POST" action="{% url 'leaderboard_member_action' current_admin_reg.id %}" style="margin: 0;">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="resign_admin">
-                <button type="submit" style="background-color: #ffc107;" onclick="return confirm('Are you sure you want to step down as an admin?');">
+                <button type="submit" class="btn-control btn-control-warning" onclick="return confirm('Are you sure you want to step down as an admin?');">
                     Resign as Admin
                 </button>
             </form>
 
-            <form method="POST" style="display: inline-block;">
+            <form method="POST" style="margin: 0;">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="delete_leaderboard">
-                <button type="submit" style="background-color: #dc3545; color: white;" onclick="return confirm('CRITICAL WARNING: Are you sure you want to delete this leaderboard permanently for everyone?');">
+                <button type="submit" class="btn-control btn-control-danger" onclick="return confirm('CRITICAL WARNING: Are you sure you want to delete this leaderboard permanently for everyone?');">
                     Delete Entire Leaderboard
                 </button>
             </form>
         </div>
+    </div>
 
-        <h3>Manage Members</h3>
-        <table style="width: 100%; text-align: left; border-collapse: collapse;">
+    <h3 class="section-title">Manage Members</h3>
+    <div class="table-wrapper">
+        <table class="members-table">
             <thead>
-                <tr style="border-bottom: 2px solid #333;">
-                    <th style="padding: 10px;">Player</th>
-                    <th style="padding: 10px;">Role</th>
-                    <th style="padding: 10px;">Actions</th>
+                <tr>
+                    <th>Player</th>
+                    <th>Role</th>
+                    <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for member in members %}
-                    <tr style="border-bottom: 1px solid #ccc;">
-                        <td style="padding: 10px;">{{ member.competition_registration.user.username }}</td>
-                        <td style="padding: 10px;">
+                    <tr>
+                        <td>{{ member.competition_registration.user.username }}</td>
+                        <td>
                             {% if member.is_admin %}
-                                <strong style="color: #28a745;">Admin</strong>
+                                <span class="role-badge-admin">Admin</span>
                             {% else %}
-                                <span>Player</span>
+                                <span class="role-badge-player">Player</span>
                             {% endif %}
                         </td>
-                        <td style="padding: 10px;">
+                        <td style="text-align: right;">
                             {% if member.competition_registration.user != request.user %}
-                                {% if not member.is_admin %}
-                                    <form method="POST" action="{% url 'leaderboard_member_action' member.id %}" style="display: inline-block; margin-right: 5px;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="make_admin">
-                                        <button type="submit" style="font-size: 0.85em;">Promote to Admin</button>
-                                    </form>
-                                {% endif %}
+                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                                    {% if not member.is_admin %}
+                                        <form method="POST" action="{% url 'leaderboard_member_action' member.id %}" style="margin: 0;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="make_admin">
+                                            <button type="submit" class="btn-row-action btn-row-promote">Promote to Admin</button>
+                                        </form>
+                                    {% endif %}
 
-                                <form method="POST" action="{% url 'leaderboard_member_action' member.id %}" style="display: inline-block;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="remove_member">
-                                    <button type="submit" style="background-color: #dc3545; color: white; font-size: 0.85em;" onclick="return confirm('Are you sure you want to kick this player?');">
-                                        Kick Member
-                                    </button>
-                                </form>
+                                    <form method="POST" action="{% url 'leaderboard_member_action' member.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="remove_member">
+                                        <button type="submit" class="btn-row-action btn-row-kick" onclick="return confirm('Are you sure you want to kick this player?');">
+                                            Kick Member
+                                        </button>
+                                    </form>
+                                </div>
                             {% else %}
-                                <span style="color: gray; font-style: italic;">You (Current Admin)</span>
+                                <span class="current-user-tag">You (Current Admin)</span>
                             {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
 
-        <br><br>
-        <a href="{% url 'leaderboard_detail' leaderboard.id %}">
-            <button type="button">← Back to Leaderboard Rankings</button>
+    <div class="footer-actions">
+        <a href="{% url 'leaderboard_detail' leaderboard.id %}" class="btn-control btn-control-secondary" style="text-decoration: none; display: inline-block;">
+            &larr; Back to Leaderboard Rankings
         </a>
     </div>
+</div>
 {% endblock content %}

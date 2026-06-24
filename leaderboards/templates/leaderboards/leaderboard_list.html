@@ -1,29 +1,168 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>My Leaderboards</h1>
+<style>
+    .leaderboards-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .list-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-action {
+        display: inline-block;
+        padding: 0.625rem 1.25rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+        border-radius: 0.375rem;
+        text-align: center;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-create {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .btn-create:hover {
+        background-color: #1d4ed8;
+    }
+
+    .btn-join {
+        background-color: #0891b2;
+        color: #ffffff;
+    }
+
+    .btn-join:hover {
+        background-color: #0e7490;
+    }
+
+    /* Grid Layout */
+    .leaderboards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Card Styling */
+    .leaderboard-card {
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .leaderboard-card:hover {
+        transform: translateY(-4px);
+        border-color: #475569;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .leaderboard-card h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0 0 0.5rem 0;
+        line-height: 1.4;
+    }
+
+    .leaderboard-info {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin: 0 0 1.5rem 0;
+    }
+
+    .leaderboard-info strong {
+        color: #cbd5e1;
+    }
+
+    .btn-view {
+        margin-top: auto;
+        width: 100%;
+        box-sizing: border-box;
+        display: inline-block;
+        padding: 0.625rem 1.25rem;
+        background-color: transparent;
+        color: #cbd5e1;
+        border: 1px solid #475569;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-align: center;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-view:hover {
+        background-color: #334155;
+        color: #ffffff;
+        border-color: #64748b;
+    }
+
+    /* Empty State */
+    .empty-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        background-color: #1e293b;
+        border: 1px dashed #475569;
+        border-radius: 0.75rem;
+        color: #94a3b8;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="leaderboards-container">
+    <div class="header-actions">
+        <h1 class="list-title">My Leaderboards</h1>
+        
+        <div class="action-buttons">
+            <a href="{% url 'leaderboard_create' %}" class="btn-action btn-create">+ Create New</a>
+            <a href="{% url 'leaderboard_join' %}" class="btn-action btn-join">Join via Code</a>
+        </div>
+    </div>
     
     <div class="leaderboards-grid">
         {% for board in leaderboards %}
-            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+            <div class="leaderboard-card">
                 <h2>{{ board.name }}</h2>
-                <p>Competition: <strong>{{ board.competition.name }}</strong></p>
+                <p class="leaderboard-info">Competition: <strong>{{ board.competition.name }}</strong></p>
                 
-                <a href="{% url 'leaderboard_detail' board.id %}">
-                    <button type="button">View Rankings</button>
+                <a href="{% url 'leaderboard_detail' board.id %}" class="btn-view">
+                    View Rankings
                 </a>
             </div>
         {% empty %}
-            <p>You haven't joined any private leaderboards yet.</p>
+            <div class="empty-message">
+                <p>You haven't joined any private leaderboards yet.</p>
+            </div>
         {% endfor %}
     </div>
-    
-    <br>
-    <a href="{% url 'leaderboard_create' %}">
-        <button type="button" style="background-color: #007bff; color: white;">+ Create New</button>
-    </a>
-    
-    <a href="{% url 'leaderboard_join' %}" style="margin-left: 10px;">
-        <button type="button" style="background-color: #17a2b8; color: white;">Join via Code</button>
-    </a>
+</div>
 {% endblock content %}

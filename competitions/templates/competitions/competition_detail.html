@@ -274,6 +274,18 @@
         font-weight: 600;
     }
 
+
+    .score-input::-webkit-outer-spin-button,
+    .score-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .score-input {
+        -moz-appearance: textfield;
+    }
+
+
     .score-input {
         width: 40px;
         text-align: center;
@@ -416,7 +428,11 @@
                                         
                                         <td class="match-cell">
                                             <div class="team-cell home">
-                                                {{ match.home_team.name }}
+                                                {% if match.home_team.name %}
+                                                {{match.home_team.name}}
+                                                {% else %}
+                                                TBD
+                                                {% endif %}
                                                 {% if match.home_team.emblem %}
                                                     <img src="{{ match.home_team.emblem }}" alt="{{ match.home_team.name }} logo" class="team-emblem">
                                                 {% endif %}
@@ -444,7 +460,7 @@
                                                     {% endif %}
 
                                                 {% else %}
-                                                    <div class="actual-score" style="color: #475569;">VS</div>
+                                                    <div class="actual-score">VS</div>
                                                 {% endif %}
                                             </div>
                                             
@@ -484,7 +500,11 @@
                                                 {% if match.away_team.emblem %}
                                                     <img src="{{ match.away_team.emblem }}" alt="{{ match.away_team.name }} logo" class="team-emblem">
                                                 {% endif %}
-                                                {{ match.away_team.name }}
+                                                {% if match.away_team.name %}
+                                                {{match.away_team.name}}
+                                                {% else %}
+                                                TBD
+                                                {% endif %}
                                             </div>
                                         </td>
                                     </tr>

@@ -1,18 +1,139 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="form-container">
+<style>
+    .join-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 80px);
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+
+    .join-container {
+        width: 100%;
+        max-width: 450px;
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        padding: 2.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+
+    .join-container h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.5px;
+    }
+
+    .join-container p {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin: 0 0 2rem 0;
+        line-height: 1.5;
+    }
+
+    .join-form {
+        text-align: left;
+    }
+
+    .join-form p {
+        margin: 0 0 1.5rem 0;
+    }
+
+    .join-form label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        margin-bottom: 0.5rem;
+    }
+
+    .join-form input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.75rem;
+        background-color: #0f172a;
+        border: 1px solid #475569;
+        border-radius: 0.375rem;
+        color: #f8fafc;
+        font-size: 1rem;
+        font-family: monospace;
+        letter-spacing: 1px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .join-form input:focus {
+        outline: none;
+        border-color: #0891b2;
+        box-shadow: 0 0 0 1px #0891b2;
+    }
+
+    .join-form ul.errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+        color: #f87171;
+        font-size: 0.85rem;
+    }
+
+    .actions-group {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-top: 2rem;
+    }
+
+    .btn-join {
+        flex: 1;
+        padding: 0.75rem;
+        background-color: #0891b2;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        text-align: center;
+    }
+
+    .btn-join:hover {
+        background-color: #0e7490;
+    }
+
+    .link-cancel {
+        color: #94a3b8;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: color 0.2s ease;
+    }
+
+    .link-cancel:hover {
+        color: #cbd5e1;
+    }
+</style>
+
+<div class="join-wrapper">
+    <div class="join-container">
         <h1>Join a Leaderboard</h1>
         <p>Enter the invite code provided by your friends to join their private league.</p>
         
-        <form method="POST">
+        <form method="POST" class="join-form">
             {% csrf_token %}
             
             {{ form.as_p }}
             
-            <br>
-            <button type="submit" style="background-color: #17a2b8; color: white;">Join League</button>
-            <a href="{% url 'leaderboard_list' %}" style="margin-left: 15px;">Cancel</a>
+            <div class="actions-group">
+                <button type="submit" class="btn-join">Join League</button>
+                <a href="{% url 'leaderboard_list' %}" class="link-cancel">Cancel</a>
+            </div>
         </form>
     </div>
+</div>
 {% endblock content %}
