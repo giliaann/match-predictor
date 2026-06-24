@@ -11,6 +11,44 @@
         padding: 20px;
     }
 
+    .messages-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #34d399;
+    }
+    
+    .alert-error, .alert-danger {
+        background-color: rgba(220, 38, 38, 0.1);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        color: #f87171;
+    }
+    
+    .alert-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+    
+    .alert-info {
+        background-color: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+    }
+
     .page-title {
         font-size: 2rem;
         font-weight: 700;
@@ -333,6 +371,16 @@
 </style>
 
 <div class="competition-container">
+    
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <h1 class="page-title">{{ competition.name }} <span style="color: #94a3b8; font-weight: 400;">({{ competition.date_start|date:"Y" }})</span></h1>
     
     {% if not user.is_authenticated %}

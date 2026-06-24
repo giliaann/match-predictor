@@ -1,12 +1,33 @@
 import requests
 from django.conf import settings
 from competitions.models import Competition, Team, Match
+from django.core.exceptions import ValidationError
+
+def leave_competition(*, user, competition):
+    """
+    Removes a user from a competition. 
+    Raises ValidationError if the user is a private leaderboard admin.
+    """
+    registration = user.competition_registrations.filter(competition=competition).first()
+    
+    if not registration:
+        return
+
+    is_admin_somewhere = registration.leaderboards.filter(is_admin=True).exists()
+
+    if is_admin_somewhere:
+        raise ValidationError(
+            "You cannot leave this competition because you are an administrator of a private leaderboard within it. "
+            "Step down from your admin position or delete the leaderboard first."
+        )
+
+    registration.delete()
 
 class CompetitionSyncError(Exception):
     """Custom exception for sync failures."""
     pass
 
-def sync_competition_matches(comp_code: str) -> dict:
+def sync_competition_matches(comp_code):
     """
     Fetches match schedules and scores from api.football-data.org
     and synchronizes them with the local database.
@@ -109,7 +130,7 @@ def sync_competition_matches(comp_code: str) -> dict:
         "no_matches": False
     }
 
-def setup_competition_and_teams(comp_code: str) -> dict:
+def setup_competition_and_teams(comp_code):
     """
     Fetches competition details and all qualified teams from api.football-data.org.
     Creates or updates the Competition and Team models.
