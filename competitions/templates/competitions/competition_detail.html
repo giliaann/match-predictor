@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ competition.name }} ({{ competition.date_start|date:"Y" }})</h1>
+    
+    {% if not user.is_authenticated %}
+        <p>You must log in to join and predict matches for this competition.</p>
+        <a href="{% url 'login' %}">Log In</a>
+        
+    {% elif not is_registered %}
+        <p>You haven't joined this competition yet!</p>
+        <form action="{% url 'join_competition' competition.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Join Competition & Start Predicting!</button>
+        </form>
+        
+    {% else %}
+        <p>You are participating in this competition! Good luck.</p>
+        
+        <h2>Matches</h2>
+        <div class="matches-list">
+            {% for match in matches %}
+                <!-- Reusable component placeholder: -->
+                <!-- include 'matches/partials/match_row.html' -->
+                
+                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                    {{ match.home_team.name }} vs {{ match.away_team.name }} 
+                    <br>
+                    <small>Kickoff: {{ match.kickoff_time|date:"d.m.Y H:i" }} | Status: {{ match.status }}</small>
+                </div>
+            {% empty %}
+                <p>No matches scheduled for this competition.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <br>
+    <a href="{% url 'competition_list' %}">← Back to competition list</a>
+{% endblock content %}

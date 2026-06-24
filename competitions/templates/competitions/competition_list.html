@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Select competition</h1>
+    
+    <div class="competitions-grid">
+        {% for comp in competitions %}
+            <div class="competition-card">
+                {% if comp.emblem %}
+                    <img src="{{ comp.emblem }}" alt="Logo {{ comp.name }}" width="100">
+                {% endif %}
+                <h2>{{ comp.name }} ({{ comp.date_start|date:"Y" }})</h2>
+                <p>Duration: {{ comp.date_start }} - {{ comp.date_finish }}</p>
+                
+                <a href="{% url 'competition_detail' comp.code %}">
+                    <button type="button">See details</button>
+                </a>
+            </div>
+        {% empty %}
+            <p>No competition is available.</p>
+        {% endfor %}
+    </div>
+{% endblock content %}
