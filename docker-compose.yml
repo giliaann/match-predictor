@@ -1,16 +1,35 @@
 services:
   db:
     image: postgres:15
-    container_name: match-predictor-django-db
     restart: always
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    restart: always
+    command: uv run python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  background:
+    build: .
+    restart: always
+    command: uv run python manage.py run_scheduler --code WC
+    env_file:
+      - .env
+    environment:
+      - SKIP_INIT=true
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
